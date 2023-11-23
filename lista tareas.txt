@@ -1,0 +1,45 @@
+====================================================================================================
+Tareas cumplidas:
+----------------
+- incorporar la estructura PSTM                                                 - (OK)
+- agregar control cuando el Archivo de MODULOS esta vacio                       - (OK)
+- agregar funcionalidad CRUD del archivo 'MODULOS'                              - (OK)
+- comando para listar todas las DLLs activas en el loguer                       - (OK)
+- Generar un WARMBOOT de DLLs para recargar las modificaciones                  - (OK)
+- Programa para generar nuevas librerias dinamicas: [ $DATA26.GENLIBS.GENERATE ]- (OK)
+- Agregar Archivo de grabado de txs diarios ( Ej: SLyymmdd )                    - (OK) 
+- Manejo del Area de Token. (Agustin Metz)                                      - (OK)        
+====================================================================================================
+
+LISTA DE PENDIENTES:
+-------------------
+--> Warmboot de librerias dinamicas SUSPENDIDAS
+--> Netwrite ( para derivar la mensajeria )
+--> Modificar PSTM para incorporar 4 bytes para el Producto / SubProducto
+--> Definir Token Q0 de info para el satélite.
+--> Pozo - FSTM
+
+====================================================================================================
+comando de acciones para librerias Dinamicas:
+--------------------------------------------
+[ DELIVER P <PROCESS>, "9500LOAD -name=AA10 -vol=$data26" ]   - carga nueva libreria existente
+[ DELIVER P <PROCESS>, "9500SUSP -name=AA10" ]                - suspende la libreria y hace warmboot
+[ DELIVER P <PROCESS>, "9500ACTV -name=AA10" ]                - Activa la libreria y hace warmboot
+[ DELIVER P <PROCESS>, "9500DELT -name=AA10" ]                - borra el registro del archivo de 
+                                                                modulos y hace warmboot
+====================================================================================================
+estructura de Archivo del Satellite:
+-----------------------------------
+$DATA26.SATC     --> estructura principal de archivos del modulo
+$DATA26.DLLSSATC --> ubicacion del archivo 'MODULOS' que contiene los registros de las DLL's creadas
+
+====================================================================================================
+creacion de librerias:[Formato]
+--------------------------------
+$DATA26.DLLS[pr][sp].<dll[pr][sp]>   |--> ejemplo: $DATA26.DLLSPRSP.DLLPRSP
+
+====================================================================================================
+NUEVO Programa para generar nuevas librerias dinamicas: 
+------------------------------------------------
+[ $DATA26.GENLIBS.GENLIB ]  
+====================================================================================================

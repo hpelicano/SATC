@@ -1,0 +1,30 @@
+ BASE24-BASE  LOGICAL NET CONFIG FILE  DVL1        23/09/12  15:24  02 OF 04
+                             LNCF ASSIGN SCREEN
+                    READ BY: ****************
+                ASSIGN NAME: DLLS-DINAMICAS
+                LOCATION/ID: \NARGP2.$DATA26.DLLSSATC.MODULOS
+              TEMPLATE FILE:
+ USAGE CODES:
+ BASE ATM  POS  ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
+ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
+ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
+ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
+ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
+ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
+ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
+ COMMENTS:   DISK FILE LOCATION OF THE ACQUIRER PROCESSING CODE FILE (APCF).
+             READ BY APCF SERVER, EMT BUILD UTILITY.
+
+
+ USER FIELD:
+ RECORD LAST CHANGED: 23/09/12  15:24   BY USER: 0255 , 00000255   ADD
+ *********************************** BASE24 ***********************************
+  NEW PAGE:        FILE DESTINATION:        NEW LOGICAL NETWORK ID:
+ SF2 - SEARCH-FOR-MATCH         F12-HELP
+RECORD ADDED TO \NARGP2.$DATA26.DVL1DATA.L1CONF                          0000
+
+
+
+libreria de Tokens en C:
+-----------------------
+$DATA26.TULBSRC.BADDLC
