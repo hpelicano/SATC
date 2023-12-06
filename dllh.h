@@ -18,8 +18,8 @@
 #define VISA   4 
 #define ORIGEN_ERROR 9
 
-/* Comando para Warmboot de proceso */
-#define WARMBOOT "9501WMBT"
+/* Comando para Warmboot de proceso cierra los STF's y abre los nuevos*/
+#define WARMBOOT "9502"
 
 /* ejemplo de comando para Alta de Libreria Dinamica:
    [ DELIVER P <PROCESS>, "9500LOAD -name=AA10 -vol=$data26" ] 
@@ -41,7 +41,7 @@
 
 /* ejemplo de comando para Listar todas las librerias activas: 
    [ DELIVER P <PROCESS>, "9500LIST -name=****" ]    */
-#define DLL_LIST "9502LIST"
+#define DLL_LIST "9510LIST"
 
 short ProcesarRequest(pstm_def* pstm, short count_dlls_mcb,tkn_area_def* tokens);
 short ProcesarResponse(pstm_def* pstm, short count_dlls_mcb,tkn_area_def* tokens);
@@ -50,5 +50,6 @@ short ProcesarComandos(char* p_msg_txtptr, short rcvMessageLen);
 short abm_dlls_dinamicas(char* p_msg_txtptr, short rcvMessageLen);
 short listar_dlls(char* p_msg_txtptr, short rcvMessageLen);
 short warmboot_dlls();
+short warmboot_STF_Files();
 
 #endif

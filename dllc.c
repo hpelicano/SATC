@@ -15,7 +15,7 @@
 
 #include<xncext>
 
-
+extern char lconf_name[27];
 
 #pragma section ProcesarRequest
 #pragma page "ProcesarRequest"
@@ -74,7 +74,7 @@ short stat;
         }
     }else{
         LOGUTIL_Log(LLINFO, MSG_FREE_FORM, 
-                    "[ProcesarRequest]: Este Producto/Subproducto no se encuentra Activo.");
+                    "[ProcesarRequest]: Producto/Subproducto [%.4s] no se encuentra Activo.", prodSubprod);
 
         memcpy(pstm->typ,"0210", 4);              /* 0210 de respuesta       */
         memcpy(pstm->tran.resp_cde, "071", 3);    /* Invalid RUT Auth        */
@@ -130,14 +130,6 @@ short i;
 
 
     /*---------------------------------------------------------------------*/
-    /*  Comando para Warmboot del modulo                                   */
-    /*---------------------------------------------------------------------*/
-    if(!memcmp(p_msg_txtptr, "9501", 4 )){
-        /* Metodo para reiniciar archivos y proceso */
-        /* Analizar el uso del Lconf */
-    }
-
-    /*---------------------------------------------------------------------*/
     /*  Comando para CRUD de DLLs                                          */
     /*---------------------------------------------------------------------*/
     if(!memcmp(p_msg_txtptr, "9500", 4 )){
@@ -158,9 +150,22 @@ short i;
     }
 
     /*---------------------------------------------------------------------*/
-    /*  Comando para Listar registros                                      */
+    /*  Comando Cutover para Warmboot de STF Files                         */
     /*---------------------------------------------------------------------*/
     if(!memcmp(p_msg_txtptr, "9502", 4 )){
+        rc = warmboot_STF_Files();
+        if (rc!=0){
+            LOGUTIL_Log(LLINFO, MSG_FREE_FORM, 
+                        "[ProcesarComandos]:Error al ejecutar 9502.");
+            return true;
+        }
+    }
+
+
+    /*---------------------------------------------------------------------*/
+    /*  Comando para Listar registros                                      */
+    /*---------------------------------------------------------------------*/
+    if(!memcmp(p_msg_txtptr, "9510", 4 )){
         rc = listar_dlls(p_msg_txtptr, rcvMessageLen);
         if (rc!=0){
             LOGUTIL_Log(LLINFO, MSG_FREE_FORM, 
@@ -169,10 +174,43 @@ short i;
         }
     }
 
-
     return false;/*OK*/
 
 }
+
+#pragma section warmboot_STF_Files
+#pragma page "warmboot_STF_Files"
+/*============================================================================*/
+/* @Method:  */
+/* @Brief:   */
+/* @Params:  */
+/* @Return:  */
+/*============================================================================*/
+short warmboot_STF_Files(){
+
+short inReturn = 0;
+
+    close_STF(0); /* Archivo de tx de ayer   */
+    close_STF(1); /* Archivo de tx de hoy    */
+    close_STF(2); /* Archivo de tx de mañana */
+
+    /* Libero la memoria global de los archivos STF  */
+    free(gSTF); 
+
+    /*-------------------------------------*/
+    /* Crecion del Archivo STF             */
+    /*-------------------------------------*/
+    inReturn = init_STF();
+    if(inReturn == 10){
+        LOGUTIL_Log(LLPANIC, MSG_FREE_FORM, 
+                    "[warmboot_STF_Files] (ERROR): Falla al crear STF");
+        return true;
+    }
+
+    return false; /*OK*/
+}
+
+
 
 
 #pragma section listar_dlls
@@ -268,9 +306,25 @@ char  prsp_key[4];
 /*============================================================================*/
 short warmboot_dlls(){
 short rc;
+short i;
+    /* Primero cierro las librerias dinamicas para soltar los OBJs de las DLLs */
+    for (i = 0; i < count_dlls_mcb; i++){
+        if (dlclose(gDllMcb[i].dllHandle) == 0 ){
+            LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,
+            "[warmboot_dlls]: DLL Close/Unload: [%s], [%s].[%d]", 
+            gDllMcb[i].path_file, dlerror(),dlresultcode());
+        }
+    }
 
     /* Libero la memoria del Memory Control Block de las DLLs */
     free(gDllMcb);
+
+    /* Reinicio la estructura del LCONF */
+    if(inicializar_Lconf(lconf_name)){
+        LOGUTIL_Log(LLPANIC, MSG_FREE_FORM, 
+            "[warmboot_dlls]: Error al Reiniciar el LCONF.");
+        return -1;
+    }
 
     /* Reinicio el proceso de carga en memoria de las librerias */
     rc = load_dinamic_dlls();
@@ -565,7 +619,7 @@ _cc_status cc;
 
                 dlclose(gDllMcb[i].dllHandle);
                 LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,
-               "[abm_dlls_dinamicas]: DLL Unload: [%s]", gDllMcb[i].path_file );
+               "[abm_dlls_dinamicas]: DLL Unload: [%s], [%s].[%d]", gDllMcb[i].path_file, dlerror(),dlresultcode());
             
             }
         }

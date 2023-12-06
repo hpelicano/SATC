@@ -335,7 +335,13 @@ char msg_err[80];
 
     /*[A]- Obtengo la dlHandle de la libreria */
     gDllMcb[i].dllHandle = dlopen(gDllMcb[i].path_file, 
-                                  RTLD_NOW | RTLD_VERBOSE(2));
+                                  RTLD_NOLOAD | RTLD_VERBOSE(2));
+
+    if(gDllMcb[i].dllHandle == 0){
+      gDllMcb[i].dllHandle = dlopen(gDllMcb[i].path_file, 
+                                  RTLD_LAZY | RTLD_VERBOSE(2));
+    }
+
 
     if (!gDllMcb[i].dllHandle){
       LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,
@@ -457,8 +463,9 @@ short error          = 0;
   if (error == 0){
     LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,"STF creado: [%s]", fname );
   }else{
-    LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,"(ERROR) al crear STF [%s]", fname);
-    return TRUE;
+    LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,"[create_STF] (ERROR) al crear STF [%s]. Error Nro:[%d].", 
+              fname, error);
+    return error;
   }
 
 
@@ -601,9 +608,9 @@ char fname_siguiente[26 + 1];   /* Nombre de archivo Siguiente a crear */
   error = validar_STF(fname_anterior, largo);
   if (error){
     LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,
-                "Error en STF Anterior [%s] ", 
-                fname_anterior);
-    return TRUE;
+                "Error en STF Anterior [%s]. Error Nro:[%d].", 
+                fname_anterior, error);
+    return error;
   }
 
   /*-------------------------------------*/
@@ -618,9 +625,9 @@ char fname_siguiente[26 + 1];   /* Nombre de archivo Siguiente a crear */
   error = validar_STF(fname_actual, largo);
   if (error){
     LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,
-                "Error en STF Actual [%s] ", 
-                fname_actual);
-    return TRUE;
+                "Error en STF Actual [%s]. Error Nro:[%d]. ", 
+                fname_actual, error);
+    return error;
   }
 
   /*-------------------------------------*/
@@ -635,9 +642,9 @@ char fname_siguiente[26 + 1];   /* Nombre de archivo Siguiente a crear */
   error = validar_STF(fname_siguiente, largo);
   if (error){
     LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,
-                "Error en STF Siguiente [%s] ", 
-                fname_siguiente);
-    return TRUE;
+                "Error en STF Siguiente [%s]. Error Nro:[%d]. ", 
+                fname_siguiente, error);
+    return error;
   }
 
   /*-------------------------------------------------------------------------*/
@@ -656,24 +663,27 @@ char fname_siguiente[26 + 1];   /* Nombre de archivo Siguiente a crear */
   error = open_STF(fname_anterior, largo, number);
   if (error){
     LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,
-                "Error al Abrir el archivo STF [%s].", fname_anterior);
-    return TRUE;
+                "Error al Abrir el archivo STF [%s]. Error Nro:[%d].", 
+                fname_anterior, error);
+    return error;
   }
 
   number = 1;
   error = open_STF(fname_actual, largo, number);
   if (error){
     LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,
-                "Error al Abrir el archivo STF [%s].", fname_actual);
-    return TRUE;
+                "Error al Abrir el archivo STF [%s]. Error Nro:[%d]."
+                , fname_actual, error);
+    return error;
   }
 
   number = 2;
   error = open_STF(fname_siguiente, largo, number);
   if (error){
     LOGUTIL_Log(LLPANIC, MSG_FREE_FORM,
-                "Error al Abrir el archivo STF [%s].", fname_siguiente);
-    return TRUE;
+                "Error al Abrir el archivo STF [%s]. Error Nro:[%d].", 
+                fname_siguiente, error);
+    return error;
   }
 
   /*-------------------------*/
@@ -709,7 +719,7 @@ short error = 0;
   }else{
     /* Si no existe debo crearlo */
     error = create_STF(fname, len);
-    if (error){ return TRUE; }
+    if (error){ return error; }
   }
 
 

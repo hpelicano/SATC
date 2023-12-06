@@ -93,6 +93,7 @@ int main(int argc, char** argv, char** env)
     inReturn = init_STF();
     if(inReturn == 10){
         LOGUTIL_Log(LLPANIC, MSG_FREE_FORM, "(ERROR): Falla al crear STF");
+        PROCESS_Cerrar();
     }
 
 

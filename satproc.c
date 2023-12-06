@@ -288,7 +288,7 @@ pstm = NULL;
 #pragma section Write_Msg_to_STF
 #pragma page "Write_Msg_to_STF"
 /*============================================================================*/
-/* @Method: Write_Msg_to_STF()                                                    */
+/* @Method: Write_Msg_to_STF()                                                */
 /* @Brief:  Escribo los archivos de transacciones.                            */
 /* @Params: [none]                                                            */
 /* @Return: [OK = 0] / [Error = 1]                                            */
@@ -314,7 +314,7 @@ _cc_status cc;
           break;
 
     case 1:
-          cc = WRITEX ( gSTF->fd_act, (char*)p_pstm, 1174, &count_written);
+          cc = WRITEX ( gSTF->fd_act, (char*)p_pstm, largo, &count_written);
           if(cc != 0){
             FILE_GETINFO_ (gSTF->fd_act, &f_error);
 
